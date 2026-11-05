@@ -2,19 +2,22 @@
 
 ## Description
 
-This project is a RESTful web service developed using Node.js, Express, and MongoDB. It provides endpoints to retrieve information about books stored in a MongoDB database.
+This project is a RESTful web service developed using Node.js, Express,
+and MongoDB. It provides endpoints to retrieve information about books
+stored in a MongoDB database.
 
-The API supports retrieving all books and retrieving an individual book by its ID.
+The API supports retrieving all books and retrieving an individual book
+by its ID.
 
 ## Technologies
 
-- Node.js
-- Express.js
-- MongoDB Atlas
-- MongoDB Node.js Driver
-- JavaScript (ES Modules)
-- Supertest
-- Node.js Test Runner
+-   Node.js
+-   Express.js
+-   MongoDB Atlas
+-   MongoDB Node.js Driver
+-   JavaScript (ES Modules)
+-   Supertest
+-   Node.js Test Runner
 
 ## API Base URL
 
@@ -32,13 +35,13 @@ Returns all books stored in the database.
 
 Example request:
 
-```text
+``` text
 GET https://cse341-books-m1ou.onrender.com/books
 ```
 
 Example response:
 
-```json
+``` json
 [
   {
     "id": "b1",
@@ -69,13 +72,13 @@ Returns a specific book using its ID.
 
 Example request:
 
-```text
+``` text
 GET https://cse341-books-m1ou.onrender.com/books/b1
 ```
 
 Example response:
 
-```json
+``` json
 {
   "id": "b1",
   "author": "Maya Rivera",
@@ -88,7 +91,7 @@ If the requested book does not exist, the API returns HTTP 404.
 
 Example error response:
 
-```json
+``` json
 {
   "message": "Book not found"
 }
@@ -96,44 +99,50 @@ Example error response:
 
 ## HTTP Status Codes
 
-| Status Code | Description |
-|---|---|
-| 200 OK | Request completed successfully. |
-| 404 Not Found | The requested book does not exist. |
-| 500 Internal Server Error | An unexpected error occurred while retrieving book data. |
+  -----------------------------------------------------------------------
+  Status Code                         Description
+  ----------------------------------- -----------------------------------
+  200 OK                              Request completed successfully.
+
+  404 Not Found                       The requested book does not exist.
+
+  500 Internal Server Error           An unexpected error occurred while
+                                      retrieving book data.
+  -----------------------------------------------------------------------
 
 ## Installation and Local Setup
 
-1. Clone the repository:
+1.  Clone the repository:
 
-```bash
+``` bash
 git clone https://github.com/gabrielcalderonr2/cse341-books.git
 ```
 
-2. Navigate to the project directory:
+2.  Navigate to the project directory:
 
-```bash
+``` bash
 cd cse341-books
 ```
 
-3. Install dependencies:
+3.  Install dependencies:
 
-```bash
+``` bash
 npm install
 ```
 
-4. Create a `.env` file in the project root and configure the following environment variables:
+4.  Create a `.env` file in the project root and configure the following
+    environment variables:
 
-```env
+``` env
 MONGODB_URI=your_mongodb_connection_string
 MONGODB_DB_NAME=cse341-books-db
 ```
 
 Do not commit the `.env` file or expose your MongoDB credentials.
 
-5. Start the development server:
+5.  Start the development server:
 
-```bash
+``` bash
 npm run dev
 ```
 
@@ -143,23 +152,24 @@ The application runs locally on the configured port (default: 3000).
 
 Run the automated tests:
 
-```bash
+``` bash
 npm test
 ```
 
 Run ESLint to check code quality:
 
-```bash
+``` bash
 npm run lint
 ```
 
 The automated tests cover:
 
-- Retrieving all books successfully (HTTP 200).
-- Handling database errors when retrieving all books (HTTP 500).
-- Retrieving an existing book by ID (HTTP 200).
-- Handling a book that does not exist (HTTP 404).
-- Handling database errors when retrieving an individual book (HTTP 500).
+-   Retrieving all books successfully (HTTP 200).
+-   Handling database errors when retrieving all books (HTTP 500).
+-   Retrieving an existing book by ID (HTTP 200).
+-   Handling a book that does not exist (HTTP 404).
+-   Handling database errors when retrieving an individual book (HTTP
+    500).
 
 ## Database Configuration
 
@@ -173,7 +183,8 @@ The collection used by the API is:
 
 `books`
 
-Database credentials are configured through environment variables and are not stored in the source code.
+Database credentials are configured through environment variables and
+are not stored in the source code.
 
 ## Deployment
 
