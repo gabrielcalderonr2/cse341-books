@@ -1,3 +1,4 @@
+
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';
@@ -24,23 +25,40 @@ const sampleBooks = [
   }
 ];
 
-const createMockDatabase = (shouldFail = false) => {return {
-  collection: () => {return {
-    find: () => {return {
-      toArray: async () => {
-        if (shouldFail) {
-          throw new Error('Database connection failed');
-        }
+const createMockDatabase = (shouldFail = false) => {
+  return {
+    collection: () => {
+      return {
+        find: () => {
+          return {
+            toArray: async () => {
+              if (shouldFail) {
+                throw new Error('Database connection failed');
+              }
 
-        return sampleBooks;
-      }
-    }}
-  }}
-}};
+              return sampleBooks;
+            }
+          };
+        },
+        findOne: async (query) => {
+          if (shouldFail) {
+            throw new Error('Database connection failed');
+          }
+
+          return sampleBooks.find((book) => {
+            return book.id === query.id;
+          }) || null;
+        }
+      };
+    }
+  };
+};
 
 describe('GET /books', () => {
   it('should return all books with status 200', async () => {
-    const app = createApp(() => {return createMockDatabase()});
+    const app = createApp(() => {
+      return createMockDatabase();
+    });
 
     const response = await request(app).get('/books');
 
@@ -53,13 +71,57 @@ describe('GET /books', () => {
   });
 
   it('should return status 500 when the database fails', async () => {
-    const app = createApp(() => {return createMockDatabase(true)});
+    const app = createApp(() => {
+      return createMockDatabase(true);
+    });
 
     const response = await request(app).get('/books');
 
     assert.equal(response.status, 500);
     assert.deepEqual(response.body, {
       message: 'Failed to retrieve books'
+    });
+  });
+});
+
+describe('GET /books/:id', () => {
+  it('should return a book with status 200 when it exists', async () => {
+    const app = createApp(() => {
+      return createMockDatabase();
+    });
+
+    const response = await request(app).get('/books/b1');
+
+    assert.equal(response.status, 200);
+    assert.match(response.headers['content-type'], /application\/json/);
+    assert.equal(response.body.id, 'b1');
+    assert.equal(response.body.author, 'Maya Rivera');
+    assert.equal(response.body.title, 'Patterns of Light');
+  });
+
+  it('should return status 404 when the book does not exist', async () => {
+    const app = createApp(() => {
+      return createMockDatabase();
+    });
+
+    const response = await request(app).get('/books/unknown');
+
+    assert.equal(response.status, 404);
+    assert.deepEqual(response.body, {
+      message: 'Book not found'
+    });
+  });
+
+  it('should return status 500 when the database fails', async () => {
+    const app = createApp(() => {
+      return createMockDatabase(true);
+    });
+
+    const response = await request(app).get('/books/b1');
+
+    assert.equal(response.status, 500);
+    assert.deepEqual(response.body, {
+      message: 'Failed to retrieve book'
     });
   });
 });
