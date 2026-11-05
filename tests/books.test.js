@@ -1,4 +1,3 @@
-
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';
@@ -79,7 +78,7 @@ describe('GET /books', () => {
 
     assert.equal(response.status, 500);
     assert.deepEqual(response.body, {
-      message: 'Failed to retrieve books'
+      message: 'Internal server error'
     });
   });
 });
@@ -121,7 +120,7 @@ describe('GET /books/:id', () => {
 
     assert.equal(response.status, 500);
     assert.deepEqual(response.body, {
-      message: 'Failed to retrieve book'
+      message: 'Internal server error'
     });
   });
 });

@@ -23,8 +23,8 @@ const createApp = (getDatabase = getDb) => {
     } catch (error) {
       console.error('Failed to retrieve books:', error.message);
       return res.status(500).json({
-        message: 'Failed to retrieve books'
-      });
+        message: 'Internal server error'
+});
     }
   });
 
@@ -47,7 +47,7 @@ const createApp = (getDatabase = getDb) => {
     } catch (error) {
       console.error('Failed to retrieve book:', error.message);
       return res.status(500).json({
-        message: 'Failed to retrieve book'
+        message: 'Internal server error'
       });
     }
   });
