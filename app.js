@@ -1,10 +1,16 @@
+
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from './swagger.json' with { type: 'json' };
 import { createRouter } from './src/router.js';
 
 const createApp = (getDatabase) => {
   const app = express();
 
   app.use(express.json());
+
+  // Swagger API Documentation
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   app.get('/', (req, res) => {
     return res.status(200).json({
