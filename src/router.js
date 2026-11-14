@@ -1,6 +1,7 @@
-import { createAuthorsController } from './controllers/authors.js';
+
 import express from 'express';
 import { createBooksController } from './controllers/books.js';
+import { createAuthorsController } from './controllers/authors.js';
 import { getDb } from './db/connect.js';
 
 const createRouter = (getDatabase = getDb) => {
@@ -9,91 +10,198 @@ const createRouter = (getDatabase = getDb) => {
   const booksController = createBooksController(getDatabase);
   const authorsController = createAuthorsController(getDatabase);
 
+  // =========================
+  // BOOKS API DOCUMENTATION
+  // =========================
+
   /**
-   * @openapi
+   * @swagger
    * /books:
    *   get:
    *     summary: Get all books
-   *     tags:
-   *       - Books
+   *     tags: [Books]
    *     responses:
    *       200:
-   *         description: Books returned successfully
+   *         description: List of all books
    *       500:
-   *         description: Unable to retrieve books
+   *         description: Internal server error
    */
   router.get('/books', booksController.getBooks);
 
   /**
-   * @openapi
+   * @swagger
    * /books/{id}:
    *   get:
-   *     summary: Get one book by id
-   *     tags:
-   *       - Books
+   *     summary: Get a book by ID
+   *     tags: [Books]
    *     parameters:
    *       - in: path
    *         name: id
    *         required: true
-   *         description: The custom book id, such as b1
    *         schema:
    *           type: string
    *     responses:
    *       200:
-   *         description: Book returned successfully
+   *         description: Book found
    *       404:
    *         description: Book not found
    *       500:
-   *         description: Unable to retrieve book
+   *         description: Internal server error
    */
   router.get('/books/:id', booksController.getBook);
 
   /**
-   * @openapi
-   * /authors:
-   *   get:
-   *     summary: Get all authors
-   *     tags:
-   *       - Authors
+   * @swagger
+   * /books:
+   *   post:
+   *     summary: Create a new book
+   *     tags: [Books]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - id
+   *               - authorId
+   *               - title
+   *               - publicationDate
+   *             properties:
+   *               id:
+   *                 type: string
+   *                 example: b4
+   *               authorId:
+   *                 type: string
+   *                 example: a4
+   *               title:
+   *                 type: string
+   *                 example: Example Book
+   *               publicationDate:
+   *                 type: string
+   *                 example: "2024-01-15"
    *     responses:
-   *       200:
-   *         description: A list of authors
+   *       201:
+   *         description: Book created successfully
+   *       400:
+   *         description: Invalid fields, duplicate ID, or author does not exist
    *       500:
-   *         description: Unable to retrieve authors
+   *         description: Internal server error
    */
-  router.get('/authors', authorsController.getAllAuthors);
+  router.post('/books', booksController.createBook);
 
   /**
-   * @openapi
-   * /authors/{id}:
-   *   get:
-   *     summary: Get one author by id
-   *     tags:
-   *       - Authors
+   * @swagger
+   * /books/{id}:
+   *   put:
+   *     summary: Update an existing book
+   *     tags: [Books]
    *     parameters:
    *       - in: path
    *         name: id
    *         required: true
-   *         description: Custom author id, such as a1
+   *         schema:
+   *           type: string
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - authorId
+   *               - title
+   *               - publicationDate
+   *             properties:
+   *               authorId:
+   *                 type: string
+   *                 example: a4
+   *               title:
+   *                 type: string
+   *                 example: Updated Book Title
+   *               publicationDate:
+   *                 type: string
+   *                 example: "2024-01-15"
+   *     responses:
+   *       200:
+   *         description: Book updated successfully
+   *       400:
+   *         description: Invalid fields or author does not exist
+   *       404:
+   *         description: Book not found
+   *       500:
+   *         description: Internal server error
+   */
+  router.put('/books/:id', booksController.updateBook);
+
+  /**
+   * @swagger
+   * /books/{id}:
+   *   delete:
+   *     summary: Delete a book
+   *     tags: [Books]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: string
+   *     responses:
+   *       204:
+   *         description: Book deleted successfully
+   *       404:
+   *         description: Book not found
+   *       500:
+   *         description: Internal server error
+   */
+  router.delete('/books/:id', booksController.deleteBook);
+
+  // =========================
+  // AUTHORS API DOCUMENTATION
+  // =========================
+
+  /**
+   * @swagger
+   * /authors:
+   *   get:
+   *     summary: Get all authors
+   *     tags: [Authors]
+   *     responses:
+   *       200:
+   *         description: List of all authors
+   *       500:
+   *         description: Internal server error
+   */
+  router.get('/authors', authorsController.getAllAuthors);
+
+  /**
+   * @swagger
+   * /authors/{id}:
+   *   get:
+   *     summary: Get an author by ID
+   *     tags: [Authors]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
    *         schema:
    *           type: string
    *     responses:
    *       200:
-   *         description: Author returned successfully
+   *         description: Author found
    *       404:
    *         description: Author not found
    *       500:
-   *         description: Unable to retrieve author
+   *         description: Internal server error
    */
   router.get('/authors/:id', authorsController.getAuthorById);
 
   /**
-   * @openapi
+   * @swagger
    * /authors:
    *   post:
    *     summary: Create a new author
-   *     tags:
-   *       - Authors
+   *     tags: [Authors]
    *     requestBody:
    *       required: true
    *       content:
@@ -107,30 +215,29 @@ const createRouter = (getDatabase = getDb) => {
    *             properties:
    *               id:
    *                 type: string
-   *                 example: a4
+   *                 example: a7
    *               name:
    *                 type: string
-   *                 example: Example Author
+   *                 example: Charles Dickens
    *               birthYear:
    *                 type: integer
-   *                 example: 1980
+   *                 example: 1812
    *     responses:
    *       201:
    *         description: Author created successfully
    *       400:
-   *         description: Invalid fields or duplicate author id
+   *         description: Invalid fields or duplicate ID
    *       500:
-   *         description: Unable to create author
+   *         description: Internal server error
    */
   router.post('/authors', authorsController.createAuthor);
 
   /**
-   * @openapi
+   * @swagger
    * /authors/{id}:
    *   put:
    *     summary: Update an existing author
-   *     tags:
-   *       - Authors
+   *     tags: [Authors]
    *     parameters:
    *       - in: path
    *         name: id
@@ -149,29 +256,28 @@ const createRouter = (getDatabase = getDb) => {
    *             properties:
    *               name:
    *                 type: string
-   *                 example: Updated Author
+   *                 example: Charles Dickens
    *               birthYear:
    *                 type: integer
-   *                 example: 1981
+   *                 example: 1812
    *     responses:
    *       200:
    *         description: Author updated successfully
    *       400:
-   *         description: Invalid or missing fields
+   *         description: Invalid fields
    *       404:
    *         description: Author not found
    *       500:
-   *         description: Unable to update author
+   *         description: Internal server error
    */
   router.put('/authors/:id', authorsController.updateAuthor);
 
   /**
-   * @openapi
+   * @swagger
    * /authors/{id}:
    *   delete:
    *     summary: Delete an author
-   *     tags:
-   *       - Authors
+   *     tags: [Authors]
    *     parameters:
    *       - in: path
    *         name: id
@@ -184,9 +290,9 @@ const createRouter = (getDatabase = getDb) => {
    *       404:
    *         description: Author not found
    *       409:
-   *         description: Author cannot be deleted because they still have books
+   *         description: Author cannot be deleted because they have associated books
    *       500:
-   *         description: Unable to delete author
+   *         description: Internal server error
    */
   router.delete('/authors/:id', authorsController.deleteAuthor);
 
